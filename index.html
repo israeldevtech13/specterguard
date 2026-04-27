@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SpecterGuard | Segurança Digital Avançada</title>
+    
+    <!-- Favicon de escudo -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zM12 11.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z'/></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Efeito de ruído dinâmico */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Partículas flutuantes */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(79, 70, 229, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Glassmorphism */
+        .header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 35px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .header:hover {
+            transform: translateY(-5px);
+            border-color: rgba(79, 70, 229, 0.6);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 30px rgba(79, 70, 229, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(79, 70, 229, 0.7); }
+        }
+
+        .logo-icon i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #fff, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 12px;
+            vertical-align: middle;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .header p {
+            color: #a5b4fc;
+            margin-top: 12px;
+            font-size: 0.95em;
+        }
+
+        /* Card Principal */
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1e293b;
+            font-size: 0.95em;
+        }
+
+        .input-group label i {
+            color: #4f46e5;
+            font-size: 1.2em;
+        }
+
+        textarea, input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            font-family: 'Inter', monospace;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        textarea:focus, input:focus {
+            border-color: #4f46e5;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 130px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Resultado */
+        .resultado {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 25px;
+            animation: slideIn 0.5s ease-out;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .risco-alto { 
+            border-left: 6px solid #ef4444;
+            background: linear-gradient(135deg, #fff, #fef2f2);
+        }
+        .risco-medio { 
+            border-left: 6px solid #f59e0b;
+            background: linear-gradient(135deg, #fff, #fffbeb);
+        }
+        .risco-baixo { 
+            border-left: 6px solid #10b981;
+            background: linear-gradient(135deg, #fff, #ecfdf5);
+        }
+
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+        }
+
+        .evidencias-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .evidencias-list li {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #f8fafc;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9em;
+            transition: transform 0.2s;
+        }
+
+        .evidencias-list li:hover {
+            transform: translateX(5px);
+        }
+
+        /* Botões de exemplo */
+        .exemplos-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn-exemplo {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e293b;
+        }
+
+        .btn-exemplo:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Cards de estatísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 25px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .stat-card:hover::before {
+            transform: rotate(45deg) translate(10%, 10%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .card, .resultado { padding: 20px; }
+            .logo-icon { width: 45px; height: 45px; }
+            .logo-icon i { font-size: 26px; }
+            .stats-grid { grid-template-columns: 1fr; gap: 15px; }
+            .btn-exemplo { padding: 10px 16px; font-size: 12px; }
+        }
+
+        /* Animação de loading */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="container">
+    <!-- Header com escudo animado -->
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-shield-haltered"></i>
+            </div>
+            <h1>SpecterGuard<span class="badge">Security Scanner</span></h1>
+        </div>
+        <p><i class="fas fa-robot"></i> IA de detecção de fraudes em tempo real | Escaneie qualquer link, anúncio, mensagem ou número suspeito</p>
+        <p style="font-size: 0.8em; margin-top: 8px; opacity: 0.7;">⚡ Phishing · Golpes · Typosquatting · Fraudes financeiras</p>
+    </div>
+
+    <!-- Card Principal de Input -->
+    <div class="card">
+        <div class="input-group">
+            <label><i class="fas fa-file-alt"></i> Cole o conteúdo suspeito</label>
+            <textarea id="conteudo" rows="5" placeholder="Exemplos:&#10;🔗 https://bit.ly/ganhe-agora&#10;📱 (11) 91234-5678 pedindo código&#10;📝 'URGENTE! Você ganhou um prêmio, clique aqui'&#10;🔴 https://faceb00k.com/login"></textarea>
+        </div>
+        <button class="btn-primary" id="analisarBtn">
+            <i class="fas fa-shield-haltered"></i>
+            <span>Escanear com SpecterGuard</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- Resultado Dinâmico -->
+    <div id="resultado" class="resultado hidden"></div>
+
+    <!-- Exemplos Rápidos -->
+    <div class="card">
+        <label><i class="fas fa-flask"></i> Testar com exemplos reais</label>
+        <div class="exemplos-grid">
+            <button class="btn-exemplo" data-tipo="phishing_bancario"><i class="fas fa-university"></i> Phishing Bancário</button>
+            <button class="btn-exemplo" data-tipo="kwai_falso"><i class="fas fa-tiktok"></i> Kwai Falso</button>
+            <button class="btn-exemplo" data-tipo="whatsapp_golpe"><i class="fab fa-whatsapp"></i> WhatsApp Golpe</button>
+            <button class="btn-exemplo" data-tipo="tigrinho"><i class="fas fa-dice-d6"></i> Tigrinho/Aposta</button>
+            <button class="btn-exemplo" data-tipo="premio_falso"><i class="fas fa-gift"></i> Prêmio Falso</button>
+            <button class="btn-exemplo" data-tipo="encurtador"><i class="fas fa-link"></i> Link Encurtado</button>
+            <button class="btn-exemplo" data-tipo="legitimo"><i class="fas fa-check-circle"></i> Site Legítimo</button>
+        </div>
+    </div>
+
+    <!-- Estatísticas Dinâmicas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-skull-crosswalk fa-2x"></i>
+            <div class="stat-number" id="totalGolpes">0</div>
+            <p>Ameaças bloqueadas</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-chart-line fa-2x"></i>
+            <div class="stat-number" id="totalAnalises">0</div>
+            <p>Análises realizadas</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-database fa-2x"></i>
+            <div class="stat-number" id="blacklistSize">25</div>
+            <p>Domínios na blacklist</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== SPECTERGUARD v5.0 - DESIGN COMPLETO ====================
+    
+    // BLACKLIST DE DOMÍNIOS FRAUDULENTOS
+    const dominiosFraude = new Set([
+        'itau-seguro.com', 'bradesco-login.com', 'santander-online.com', 'banco-do-brasil-login.com',
+        'nubank-falso.com', 'mercadopago-seguro.com', 'picpay-premio.com', 'magalu-premio.com',
+        'amazon-sorteio.com', 'shopee-bonus.com', 'aliexpress-sorte.com', 'kwai-fake.com',
+        'kwal-fake.com', 'kwa1.com', 'kwai-bonus.com', 'kwai-seguro.com', 'tiktok-premio.com',
+        'instagram-sorteio.com', 'faceb00k.com', 'instagr4m.com', 'whatsapp-web-falso.com',
+        'telegram-login.com', 'creatinamaster.online', 'seguranca-digital.online', 'verificacao-conta.com'
+    ]);
+    
+    const marcasOficiais = ['itau', 'bradesco', 'santander', 'bb', 'nubank', 'mercadopago', 'picpay',
+        'magalu', 'amazon', 'shopee', 'kwai', 'tiktok', 'instagram', 'facebook', 'whatsapp'];
+    
+    const encurtadores = ['bit.ly', 'tinyurl.com', 'goo.gl', 'ow.ly', 'shorturl.at', 'is.gd', 'cutt.ly'];
+    
+    const padroesFraude = {
+        urgencia: ['urgente', 'agora', 'imediato', 'último', 'limitado'],
+        financeiro: ['r$', 'ganhe', 'pix', 'depósito', 'prêmio', 'sorteio', 'milagroso'],
+        golpes: ['código', 'convite', 'verificação', 'confirmar dados', 'whatsapp', 'zap']
+    };
+    
+    // Função principal de escaneamento
+    function escanearUniversal(conteudo) {
+        let score = 0;
+        let evidencias = [];
+        const textoLower = conteudo.toLowerCase();
+        
+        // Extrair e analisar domínios
+        const regexDominio = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]{1,61}\.[a-zA-Z]{2,})/gi;
+        let match;
+        while ((match = regexDominio.exec(conteudo)) !== null) {
+            const dominio = match[1].toLowerCase();
+            if (dominiosFraude.has(dominio)) {
+                score += 10;
+                evidencias.push(`🚨 DOMÍNIO FRAUDULENTO CONFIRMADO: ${dominio}`);
+            }
+            for (let marca of marcasOficiais) {
+                if (dominio.includes(marca) && !dominio.endsWith('.com') && !dominio.endsWith('.com.br')) {
+                    score += 7;
+                    evidencias.push(`⚠️ TYPOSQUATTING: ${dominio} - tenta imitar ${marca}`);
+                    break;
+                }
+            }
+        }
+        
+        // Encurtadores
+        for (let enc of encurtadores) {
+            if (textoLower.includes(enc)) {
+                score += 4;
+                evidencias.push(`🔗 Link encurtado (${enc}) - comum em golpes`);
+                break;
+            }
+        }
+        
+        // Padrões de texto
+        for (let p of padroesFraude.urgencia) {
+            if (textoLower.includes(p)) {
+                score += 2; evidencias.push(`⏰ Gatilho de urgência: "${p}"`); break;
+            }
+        }
+        for (let p of padroesFraude.financeiro) {
+            if (textoLower.includes(p)) {
+                score += 2; evidencias.push(`💰 Termo financeiro suspeito: "${p}"`); break;
+            }
+        }
+        if (/tigrinho|fortune tiger|bitcoin|pirâmide/.test(textoLower)) {
+            score += 5; evidencias.push(`🚫 Palavra bloqueada detectada`);
+        }
+        if (textoLower.includes('código') && /\d{6,}/.test(conteudo)) {
+            score += 5; evidencias.push(`🔐 Pedido de código numérico - GOLPE`);
+        }
+        
+        // WhatsApp
+        const regexWhats = /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g;
+        while ((match = regexWhats.exec(conteudo)) !== null) {
+            const numero = match[0];
+            const numerosLimpos = numero.replace(/\D/g, '');
+            if (numerosLimpos.length >= 10 && ['11','21','61','31','41'].includes(numerosLimpos.substring(0,2))) {
+                score += 2; evidencias.push(`📱 Número suspeito: ${numero}`);
+            }
+        }
+        
+        let risco, cor;
+        if (score >= 8) { risco = "ALTO"; cor = "risco-alto"; incrementarStats('golpe'); }
+        else if (score >= 4) { risco = "MÉDIO"; cor = "risco-medio"; }
+        else { risco = "BAIXO"; cor = "risco-baixo"; }
+        
+        incrementarStats('analise');
+        return { score, risco, cor, evidencias: [...new Set(evidencias)], scoreMax: 30 };
+    }
+    
+    // Estatísticas
+    function incrementarStats(tipo) {
+        if (tipo === 'golpe') {
+            let t = parseInt(localStorage.getItem('sgGolpes') || 0) + 1;
+            localStorage.setItem('sgGolpes', t);
+            document.getElementById('totalGolpes').innerText = t;
+        }
+        let a = parseInt(localStorage.getItem('sgAnalises') || 0) + 1;
+        localStorage.setItem('sgAnalises', a);
+        document.getElementById('totalAnalises').innerText = a;
+    }
+    
+    function carregarStats() {
+        document.getElementById('totalGolpes').innerText = localStorage.getItem('sgGolpes') || 0;
+        document.getElementById('totalAnalises').innerText = localStorage.getItem('sgAnalises') || 0;
+        document.getElementById('blacklistSize').innerText = dominiosFraude.size;
+    }
+    
+    function exibirResultado(r) {
+        const div = document.getElementById('resultado');
+        div.className = `resultado ${r.cor}`;
+        div.classList.remove('hidden');
+        
+        let evidenciasHtml = '';
+        if (r.evidencias.length > 0) {
+            evidenciasHtml = `<h4><i class="fas fa-flag-checkered"></i> Evidências encontradas:</h4><ul class="evidencias-list">`;
+            for (let e of r.evidencias) evidenciasHtml += `<li><i class="fas fa-exclamation-triangle" style="color:#ef4444;"></i> ${e}</li>`;
+            evidenciasHtml += `</ul>`;
+        } else {
+            evidenciasHtml = `<p><i class="fas fa-check-circle" style="color:#10b981;"></i> Nenhum padrão suspeito detectado.</p>`;
+        }
+        
+        const emoji = r.score >= 8 ? '🔴' : (r.score >= 4 ? '🟡' : '🟢');
+        div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>${emoji} Resultado SpecterGuard</h3>
+                <span class="score-badge"><i class="fas fa-chart-simple"></i> Score: ${r.score}/${r.scoreMax}</span>
+            </div>
+            <div style="margin-bottom: 15px;"><strong>Nível de risco:</strong> ${r.risco}</div>
+            ${evidenciasHtml}
+            <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 20px;">
+                <strong><i class="fas fa-lightbulb"></i> Recomendação:</strong> ${r.score >= 8 ? '🚨 GOLPE CONFIRMADO! Não clique, não compartilhe dados.' : (r.score >= 4 ? '⚠️ MUITO SUSPEITO! Verifique fontes oficiais.' : '✅ Parece legítimo, mas mantenha atenção.')}
+            </div>
+        `;
+        div.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Carregar exemplos
+    function carregarExemplo(tipo) {
+        const exemplos = {
+            phishing_bancario: '🔐 ATENÇÃO! Sua conta do Itaú foi bloqueada. Acesse: https://itau-seguro-online.com/verificacao',
+            kwai_falso: '🚨 GANHE R$500 POR DIA! Link: https://kwal-fake.com/premio',
+            whatsapp_golpe: 'Fala amigo! Código de verificação: 876543. Me chama no whatsapp (11) 91234-5678',
+            tigrinho: '🐯 FORTUNE TIGER - Sistema revolucionário! Depósito mínimo R$50, saque na hora!',
+            premio_falso: '🎉 PARABÉNS! Você ganhou um iPhone! Clique: bit.ly/premio',
+            encurtador: '🔴 URGENTE! Clique agora: tinyurl.com/oferta',
+            legitimo: '✅ Promoção Mercado Livre: 10% off. Acesse mercadolivre.com.br'
+        };
+        document.getElementById('conteudo').value = exemplos[tipo] || '';
+        document.getElementById('analisarBtn').click();
+    }
+    
+    // Partículas
+    function criarParticulas() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.width = p.style.height = Math.random() * 6 + 2 + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDuration = Math.random() * 15 + 10 + 's';
+            container.appendChild(p);
+        }
+    }
+    
+    // Eventos
+    document.getElementById('analisarBtn').addEventListener('click', () => {
+        const conteudo = document.getElementById('conteudo').value;
+        if (!conteudo.trim()) { alert('Cole o conteúdo suspeito para escanear.'); return; }
+        const resultado = escanearUniversal(conteudo);
+        exibirResultado(resultado);
+    });
+    
+    document.querySelectorAll('.btn-exemplo').forEach(btn => {
+        btn.addEventListener('click', () => carregarExemplo(btn.getAttribute('data-tipo')));
+    });
+    
+    carregarStats();
+    criarParticulas();
+    console.log('👻 SpecterGuard v5.0 - Design completo ativado!');
+</script>
+</body>
+</html>
