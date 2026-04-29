@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpecterGuard | Segurança Digital — Rael Computadores</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2300e5ff' d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'/%3E%3Cpath fill='%23003060' d='M10 17l-4-4 1.4-1.4L10 14.2l6.6-6.6L18 9l-8 8z'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg:      #030d1a;
+            --glass:   rgba(4,16,32,0.82);
+            --border:  rgba(0,140,255,0.22);
+            --bh:      rgba(0,200,255,0.55);
+            --blue:    #0078ff;
+            --blue-l:  #38b6ff;
+            --cyan:    #00e5ff;
+            --text:    #d0eeff;
+            --dim:     #2a5f7a;
+            --danger:  #ff4f4f;
+            --warn:    #ffb930;
+            --safe:    #00e5a0;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);overflow-x:hidden;}
+        body::before{
+            content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+            background-image:linear-gradient(rgba(0,120,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,255,.04) 1px,transparent 1px);
+            background-size:42px 42px;
+        }
+        .orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+        .orb-1{width:500px;height:500px;background:rgba(0,120,255,.1);top:-150px;right:-100px;}
+        .orb-2{width:350px;height:350px;background:rgba(0,229,255,.07);bottom:50px;left:-100px;}
+        .particles{position:fixed;inset:0;pointer-events:none;z-index:0;}
+        .particle{position:absolute;border-radius:50%;background:var(--cyan);animation:rise linear infinite;opacity:0;}
+        @keyframes rise{0%{transform:translateY(100vh);opacity:0;}8%{opacity:.5;}92%{opacity:.15;}100%{transform:translateY(-8vh);opacity:0;}}
+        .wrap{max-width:960px;margin:0 auto;padding:20px 16px;position:relative;z-index:1;}
+
+        /* HEADER */
+        .header{
+            background:var(--glass);backdrop-filter:blur(28px);
+            border:1px solid var(--border);border-radius:18px;
+            padding:28px 28px 22px;margin-bottom:14px;text-align:center;
+            box-shadow:0 0 60px rgba(0,120,255,.2),0 24px 48px rgba(0,0,0,.55);
+            position:relative;overflow:hidden;
+        }
+        .header::before{
+            content:'';position:absolute;top:0;left:0;right:0;height:1px;
+            background:linear-gradient(90deg,transparent,var(--blue-l),var(--cyan),var(--blue-l),transparent);
+        }
+
+        /* LOGO - BORDAS ARREDONDADAS E EXPANDIDA */
+        .logo-box {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: all 0.35s ease;
+        }
+        .logo-box:hover {
+            transform: scale(1.01);
+        }
+        .logo-img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            background: transparent;
+            filter: drop-shadow(0 0 20px rgba(0,229,255,0.2));
+            transition: filter 0.3s;
+        }
+        .logo-box:hover .logo-img {
+            filter: drop-shadow(0 0 30px rgba(0,229,255,0.35));
+        }
+
+        .h-title{
+            font-size:1.75em;font-weight:800;letter-spacing:-.5px;
+            background:linear-gradient(120deg,#fff 10%,var(--blue-l) 50%,var(--cyan) 100%);
+            -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px;
+        }
+        .h-sub{font-size:.82em;color:var(--blue-l);opacity:.9;}
+        .badges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+        .badge{padding:4px 12px;border-radius:50px;font-size:.7em;font-weight:600;border:1px solid;}
+        .b-blue{color:var(--blue-l);border-color:rgba(0,120,255,.4);background:rgba(0,120,255,.1);}
+        .b-cyan{color:var(--cyan);border-color:rgba(0,229,255,.35);background:rgba(0,229,255,.07);}
+
+        .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:6px;}
+        .stat{
+            background:var(--glass);border:1px solid var(--border);border-radius:13px;
+            padding:18px 12px;text-align:center;position:relative;overflow:hidden;
+            transition:border-color .3s,transform .3s;
+        }
+        .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);}
+        .stat:hover{border-color:var(--bh);transform:translateY(-3px);}
+        .stat-icon{font-size:1.25em;color:var(--cyan);margin-bottom:6px;}
+        .stat-num{font-size:2em;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;}
+        .stat-label{font-size:.72em;color:var(--dim);}
+
+        .reset-row{text-align:right;margin-bottom:10px;}
+        .btn-reset{
+            background:transparent;border:1px solid rgba(0,120,255,.2);border-radius:7px;
+            color:var(--dim);font-size:.72em;padding:4px 11px;cursor:pointer;
+            font-family:'Inter',sans-serif;transition:all .2s;
+        }
+        .btn-reset:hover{border-color:rgba(0,180,255,.4);color:var(--blue-l);}
+
+        .card{
+            background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);
+            border-radius:15px;padding:22px 24px;margin-bottom:14px;
+            box-shadow:0 8px 32px rgba(0,0,0,.35);position:relative;overflow:hidden;transition:border-color .3s;
+        }
+        .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,180,255,.25),transparent);}
+        .card:hover{border-color:var(--bh);}
+        .card-title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.82em;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+
+        textarea{
+            width:100%;padding:13px 15px;background:rgba(2,8,18,.92);
+            border:1px solid rgba(0,120,255,.22);border-radius:11px;color:var(--text);
+            font-family:'Inter',monospace;font-size:13.5px;line-height:1.65;
+            resize:vertical;min-height:115px;transition:border-color .3s,box-shadow .3s;outline:none;
+        }
+        textarea::placeholder{color:#6ab8d4;font-size:13px;line-height:1.8;}
+        textarea:focus{border-color:var(--blue-l);box-shadow:0 0 0 3px rgba(0,120,255,.12);}
+
+        .btn-scan{
+            width:100%;padding:14px;margin-top:12px;
+            background:linear-gradient(135deg,#0057cc,#0078ff,#0099ff);
+            border:none;border-radius:11px;color:#fff;font-weight:700;font-size:14.5px;
+            cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;
+            transition:all .3s;position:relative;overflow:hidden;
+            box-shadow:0 4px 22px rgba(0,120,255,.35);font-family:'Inter',sans-serif;
+        }
+        .btn-scan::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transition:left .5s;}
+        .btn-scan:hover::before{left:100%;}
+        .btn-scan:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,120,255,.5);background:linear-gradient(135deg,#0066ee,#0099ff,#00ccff);}
+        .btn-scan:active{transform:translateY(0);}
+
+        .scan-bar{height:2px;margin:10px 0 0;background:linear-gradient(90deg,transparent,var(--cyan),var(--blue-l),transparent);border-radius:2px;display:none;animation:pulse 1.2s ease-in-out infinite;}
+        @keyframes pulse{0%,100%{transform:scaleX(.1);opacity:0;}50%{transform:scaleX(1);opacity:1;}}
+        .scan-bar.on{display:block;}
+
+        .resultado{border-radius:14px;padding:22px 24px;margin-bottom:14px;animation:slideIn .35s ease-out;border:1px solid;}
+        @keyframes slideIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+        .r-alto {background:rgba(255,79,79,.06); border-color:rgba(255,79,79,.38); box-shadow:0 0 28px rgba(255,79,79,.1);}
+        .r-medio{background:rgba(255,185,48,.06);border-color:rgba(255,185,48,.38);box-shadow:0 0 28px rgba(255,185,48,.1);}
+        .r-baixo{background:rgba(0,229,160,.06); border-color:rgba(0,229,160,.38); box-shadow:0 0 28px rgba(0,229,160,.1);}
+        .r-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+        .r-title{font-size:1.1em;font-weight:800;color:#fff;}
+        .score-pill{padding:5px 13px;border-radius:50px;font-size:.78em;font-weight:700;background:rgba(0,120,255,.14);border:1px solid rgba(0,180,255,.3);color:var(--blue-l);}
+        .nivel-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:50px;font-weight:700;font-size:.83em;margin-bottom:14px;}
+        .np-ALTO {background:rgba(255,79,79,.18); color:#fca5a5;border:1px solid rgba(255,79,79,.4);}
+        .np-MÉDIO{background:rgba(255,185,48,.18);color:#fde68a;border:1px solid rgba(255,185,48,.4);}
+        .np-BAIXO{background:rgba(0,229,160,.18); color:#6ee7b7;border:1px solid rgba(0,229,160,.4);}
+        .ev-titulo{font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1a5070;margin-bottom:8px;}
+        .ev-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+        .ev-list li{padding:9px 13px;background:rgba(2,8,20,.8);border:1px solid rgba(0,120,255,.14);border-radius:8px;font-size:.85em;color:#a0c8e0;display:flex;align-items:flex-start;gap:9px;transition:border-color .2s;}
+        .ev-list li:hover{border-color:rgba(0,180,255,.3);}
+        .rec{margin-top:14px;padding:13px 16px;background:rgba(2,8,20,.85);border:1px solid rgba(0,120,255,.16);border-radius:9px;font-size:.88em;color:#b0d4e8;line-height:1.65;}
+
+        .footer{text-align:center;padding:22px 12px;margin-top:6px;border-top:1px solid var(--border);}
+        .f-brand{font-weight:700;font-size:.83em;color:var(--blue-l);}
+        .f-text{font-size:.72em;color:var(--dim);margin-top:4px;line-height:1.7;}
+
+        .hidden{display:none!important;}
+    </style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="particles" id="particles"></div>
+
+<div class="wrap">
+
+    <!-- HEADER COM LOGO - BORDAS ARREDONDADAS E EXPANDIDA -->
+    <div class="header">
+        <div class="logo-box">
+            <img class="logo-img" src="https://i.imgur.com/jgqh58e.png" alt="Rael Computadores Logo">
+        </div>
+        <div class="h-title">
+            <i class="fas fa-shield-halved" style="color:var(--cyan);margin-right:8px;font-size:.85em;"></i>SpecterGuard
+        </div>
+        <div class="h-sub">Motor antifraude · Phishing · Golpes · Links maliciosos · DNS + WHOIS</div>
+        <div class="badges">
+            <span class="badge b-blue"><i class="fas fa-bolt"></i> IA Ativa</span>
+            <span class="badge b-cyan"><i class="fas fa-database"></i> DNS + WHOIS em tempo real</span>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-icon"><i class="fas fa-skull-crossbones"></i></div>
+            <div class="stat-num" id="totalGolpes">0</div>
+            <div class="stat-label">Ameaças detectadas</div>
+        </div>
+        <div class="stat">
+            <div class="stat-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
+            <div class="stat-num" id="totalAnalises">0</div>
+            <div class="stat-label">Análises realizadas</div>
+        </div>
+        <div class="stat">
+            <div class="stat-icon"><i class="fas fa-ban"></i></div>
+            <div class="stat-num">80</div>
+            <div class="stat-label">Domínios bloqueados</div>
+        </div>
+    </div>
+    <div class="reset-row">
+        <button class="btn-reset" id="resetBtn">
+            <i class="fas fa-rotate-left"></i> Zerar contadores
+        </button>
+    </div>
+
+    <!-- SCANNER -->
+    <div class="card">
+        <div class="card-title"><i class="fas fa-radar"></i> Scanner de Conteúdo Suspeito</div>
+        <textarea id="conteudo" rows="5"
+            placeholder="Cole aqui links, mensagens, URLs ou textos suspeitos:
+
+🔗 https://bit.ly/ganhe-agora
+📱 Mensagem pedindo código de verificação
+📝 URGENTE! Sua conta foi bloqueada, acesse agora"></textarea>
+        <div class="scan-bar" id="scanBar"></div>
+        <button class="btn-scan" id="analisarBtn">
+            <i class="fas fa-shield-halved"></i>
+            <span>Analisar com SpecterGuard</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- RESULTADO -->
+    <div id="resultado" class="hidden"></div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="f-brand">© 2026 RAEL COMPUTADORES — Innovation in Computing & AI Solutions</div>
+        <div class="f-text">Rael Computadores. Todos os direitos reservados.<br>Este software é propriedade intelectual da Rael Computadores.</div>
+    </div>
+
+</div>
+
+<script>
+// ── MOTOR ANTIFRAUDE v6.6 — DNS + WHOIS ─────────────────────────
+
+const BLACKLIST = new Set([
+    'itau-seguro.com','itauseguro.net','itau-online.net','itau-login.com',
+    'bradesco-login.com','bradesco-seguro.net','bradesc0.com',
+    'santander-online.com','santanderbr.net','santander-seguro.com',
+    'banco-do-brasil-login.com','bb-seguro.com','bb-login.com',
+    'nubank-falso.com','nub4nk.com','nubank-seguro.net','nubank-atendimento.com',
+    'caixa-online.net','caixa-seguro.com','sicoob-seguro.com',
+    'kwai-fake.com','kwai-premio.com','tiktok-premio.com','instagram-sorteio.com',
+    'faceb00k.com','whatsapp-web-falso.com','zap-seguro.net'
+]);
+
+const BLACKLIST_PATTERNS = [
+    /itau.*(seguro|login|acesso|verificar)/i,
+    /bradesco.*(seguro|login|acesso)/i,
+    /nubank.*(seguro|premio|bonus|atendimento)/i,
+    /santander.*(seguro|login)/i,
+    /(kwai|tiktok|instagram|facebook|whatsapp).*?(premio|bonus|sorteio|ganhe|codigo)/i,
+];
+
+const MARCAS = ['itau','bradesco','santander','caixa','bb','bancodobrasil','nubank','inter','c6bank','sicoob','sicredi','mercadopago','pagseguro','picpay'];
+
+const ENCURTADORES = ['bit.ly','tinyurl.com','goo.gl','ow.ly','cutt.ly','is.gd','rb.gy','t.co','buff.ly','short.io','clck.ru'];
+
+const DOH_URL = 'https://cloudflare-dns.com/dns-query';
+const RDAP_SERVERS = ['https://rdap.org/domain/', 'https://rdap.cloudflare.com/rdap/domain/'];
+
+const PADROES = {
+    urgencia: ['urgente','agora mesmo','imediato','últimas horas','expira hoje','não perca'],
+    ganho: ['ganhe','você ganhou','parabéns você ganhou','prêmio','sortudo','contemplado'],
+    financeiro: ['r\\$\\s*\\d','pix','depósito','saque','transferência','cashback'],
+    pessoal: ['seus dados','confirme seus dados','valide seu cpf','verificar conta'],
+    golpe_cod: ['código de verificação','me passa o código','6 dígitos'],
+    apostas: ['tigrinho','fortune tiger','slots','cassino'],
+    malware: ['baixe agora','\\.apk','instale o app'],
+    phishing_gov: ['receita federal','imposto de renda','cpf irregular','inss']
+};
+
+// Extrai domínios de forma robusta
+function extrairDominios(texto) {
+    const dominios = new Set();
+    const regex = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9\-]*\.[a-zA-Z0-9][a-zA-Z0-9\-\.]*(?:\.[a-zA-Z]{2,})?)/gi;
+    let match;
+    while ((match = regex.exec(texto)) !== null) {
+        let dom = match[1].toLowerCase().replace(/^www\./, '');
+        dominios.add(dom);
+    }
+    return Array.from(dominios);
+}
+
+// Verificação DNS
+async function verificarDNS(dominio) {
+    try {
+        const url = new URL(DOH_URL);
+        url.searchParams.set('name', dominio);
+        url.searchParams.set('type', 'A');
+
+        const controller = new AbortController();
+        setTimeout(() => controller.abort(), 4500);
+
+        const res = await fetch(url, { headers: { 'Accept': 'application/dns-json' }, signal: controller.signal });
+        const data = await res.json();
+
+        const hasA = data.Answer?.some(a => a.type === 1);
+        const hasAAAA = data.Answer?.some(a => a.type === 28);
+
+        return { success: true, resolved: hasA || hasAAAA };
+    } catch (e) {
+        return { success: false };
+    }
+}
+
+// Verificação WHOIS via RDAP
+async function verificarWHOIS(dominio) {
+    for (const base of RDAP_SERVERS) {
+        try {
+            const controller = new AbortController();
+            setTimeout(() => controller.abort(), 5000);
+
+            const res = await fetch(base + encodeURIComponent(dominio), {
+                headers: { 'Accept': 'application/json' },
+                signal: controller.signal
+            });
+
+            if (!res.ok) continue;
+            const data = await res.json();
+
+            let creationDate = null;
+            if (data.events) {
+                for (const ev of data.events) {
+                    if (ev.eventAction === 'registration' || ev.eventAction === 'created') {
+                        creationDate = ev.eventDate;
+                        break;
+                    }
+                }
+            }
+
+            if (creationDate) {
+                const created = new Date(creationDate);
+                const ageDays = Math.floor((Date.now() - created) / (86400000));
+                return { success: true, ageDays, creationDate: creationDate.split('T')[0] };
+            }
+        } catch (e) {}
+    }
+    return { success: false };
+}
+
+// Análise principal
+async function analisar(conteudo) {
+    let score = 0;
+    const flags = [];
+    const texto = conteudo.toLowerCase();
+    const dominios = extrairDominios(conteudo);
+
+    for (const dom of dominios) {
+        // Blacklist
+        if (BLACKLIST.has(dom) || BLACKLIST_PATTERNS.some(p => p.test(dom))) {
+            score += 15;
+            flags.push({n:'CRÍTICO', t:`Domínio fraudulento: <strong>${dom}</strong>`});
+            continue;
+        }
+
+        // Typosquatting
+        for (const marca of MARCAS) {
+            if (dom.includes(marca) && !dom.match(new RegExp(`^${marca}\\.(com|com\\.br|net)$`, 'i'))) {
+                score += 10;
+                flags.push({n:'ALTO', t:`Typosquatting: <strong>${dom}</strong>`});
+                break;
+            }
+        }
+
+        // DNS + WHOIS em paralelo
+        const [dnsRes, whoisRes] = await Promise.allSettled([
+            verificarDNS(dom),
+            verificarWHOIS(dom)
+        ]);
+
+        // DNS
+        if (dnsRes.status === 'fulfilled' && dnsRes.value.success && !dnsRes.value.resolved) {
+            score += 12;
+            flags.push({n:'ALTO', t:`Domínio <strong>${dom}</strong> não resolve no DNS`});
+        }
+
+        // WHOIS
+        if (whoisRes.status === 'fulfilled' && whoisRes.value.success) {
+            const age = whoisRes.value.ageDays;
+            if (age !== null) {
+                if (age < 30) {
+                    score += 14;
+                    flags.push({n:'CRÍTICO', t:`🚨 Domínio NOVO: criado há <strong>${age} dias</strong>`});
+                } else if (age < 90) {
+                    score += 8;
+                    flags.push({n:'ALTO', t:`Domínio recente: criado há <strong>${age} dias</strong>`});
+                }
+            }
+        }
+    }
+
+    // Análise textual
+    const chk = (lista, pts, nivel, cat) => {
+        const achados = lista.filter(p => new RegExp(p, 'i').test(texto));
+        if (achados.length) {
+            score += pts * achados.length;
+            flags.push({n:nivel, t:`${cat}: "<em>${achados.slice(0,3).join('</em>", "<em>')}</em>"`});
+        }
+    };
+
+    chk(PADROES.urgencia, 2.5, 'MÉDIO', 'Urgência');
+    chk(PADROES.ganho, 3.5, 'ALTO', 'Oferta de ganho');
+    chk(PADROES.golpe_cod, 7, 'CRÍTICO', 'Golpe de código');
+    chk(PADROES.pessoal, 5, 'ALTO', 'Solicitação de dados');
+    chk(PADROES.apostas, 5, 'ALTO', 'Apostas / Cassino');
+
+    if (/código|senha|token/i.test(texto) && /\b\d{4,8}\b/.test(conteudo)) {
+        score += 7;
+        flags.push({n:'CRÍTICO', t:'Solicitação de código de verificação'});
+    }
+
+    // Verificação de encurtadores
+    const curtas = ENCURTADORES.filter(s => texto.includes(s));
+    if (curtas.length) {
+        score += 6;
+        flags.push({n:'MÉDIO', t:`Link encurtado detectado: ${curtas.join(', ')}`});
+    }
+
+    const scoreMax = 70;
+    let risco, corClass;
+    if (score >= 22) { risco = 'ALTO'; corClass = 'r-alto'; incrementar('golpe'); }
+    else if (score >= 11) { risco = 'MÉDIO'; corClass = 'r-medio'; }
+    else { risco = 'BAIXO'; corClass = 'r-baixo'; }
+
+    incrementar('analise');
+
+    return { score: Math.min(Math.round(score), scoreMax), scoreMax, risco, cor: corClass, flags };
+}
+
+// Funções auxiliares (stats, exibir resultado, etc.)
+function incrementar(tipo) {
+    if (tipo === 'golpe') {
+        let t = parseInt(localStorage.getItem('sg_g') || 0) + 1;
+        localStorage.setItem('sg_g', t);
+        document.getElementById('totalGolpes').textContent = t;
+        return;
+    }
+    let a = parseInt(localStorage.getItem('sg_a') || 0) + 1;
+    localStorage.setItem('sg_a', a);
+    document.getElementById('totalAnalises').textContent = a;
+}
+
+function carregarStats() {
+    document.getElementById('totalGolpes').textContent = localStorage.getItem('sg_g') || 0;
+    document.getElementById('totalAnalises').textContent = localStorage.getItem('sg_a') || 0;
+}
+
+function exibirResultado(r) {
+    const div = document.getElementById('resultado');
+    div.className = `resultado ${r.cor}`;
+    div.classList.remove('hidden');
+
+    const emoji = {ALTO:'🔴', MÉDIO:'🟡', BAIXO:'🟢'}[r.risco];
+    const icNivel = {ALTO:'fas fa-triangle-exclamation', MÉDIO:'fas fa-circle-exclamation', BAIXO:'fas fa-circle-check'}[r.risco];
+    const pct = Math.round((r.score / r.scoreMax) * 100);
+
+    const icFlag = n => ({
+        'CRÍTICO': '<i class="fas fa-skull" style="color:#f87171;"></i>',
+        'ALTO': '<i class="fas fa-triangle-exclamation" style="color:#fb923c;"></i>',
+        'MÉDIO': '<i class="fas fa-circle-exclamation" style="color:#fbbf24;"></i>',
+        'BAIXO': '<i class="fas fa-circle-info" style="color:#38bdf8;"></i>'
+    }[n] || '');
+
+    const flagsHtml = r.flags.length ? 
+        `<div class="ev-titulo"><i class="fas fa-list-check"></i> Evidências (${r.flags.length})</div>
+         <ul class="ev-list">${r.flags.map(f => `<li>${icFlag(f.n)} <span><strong>[${f.n}]</strong> ${f.t}</span></li>`).join('')}</ul>` : 
+        `<p style="color:#6ee7b7;"><i class="fas fa-check-circle"></i> Nenhum padrão suspeito detectado.</p>`;
+
+    const rec = {
+        ALTO: '🚨 <strong>GOLPE CONFIRMADO!</strong> Não clique, não informe dados e denuncie imediatamente.',
+        MÉDIO: '⚠️ <strong>Suspeito.</strong> Verifique pelos canais oficiais antes de prosseguir.',
+        BAIXO: '✅ <strong>Parece seguro.</strong> Mantenha atenção ao compartilhar dados.'
+    }[r.risco];
+
+    div.innerHTML = `
+        <div class="r-head">
+            <div class="r-title">${emoji} Análise SpecterGuard</div>
+            <span class="score-pill"><i class="fas fa-chart-bar"></i> Score ${r.score}/${r.scoreMax} · ${pct}%</span>
+        </div>
+        <div class="nivel-pill np-${r.risco}"><i class="${icNivel}"></i> RISCO ${r.risco}</div>
+        ${flagsHtml}
+        <div class="rec">${rec}</div>
+    `;
+    div.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Eventos
+document.getElementById('analisarBtn').addEventListener('click', async () => {
+    const txt = document.getElementById('conteudo').value.trim();
+    if (!txt) return;
+
+    const bar = document.getElementById('scanBar');
+    const btn = document.getElementById('analisarBtn');
+    bar.classList.add('on');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analisando + DNS + WHOIS...';
+    btn.disabled = true;
+
+    try {
+        const resultado = await analisar(txt);
+        exibirResultado(resultado);
+    } catch (error) {
+        console.error('Erro na análise:', error);
+        const div = document.getElementById('resultado');
+        div.className = 'resultado r-alto';
+        div.classList.remove('hidden');
+        div.innerHTML = '<div class="r-title">⚠️ Erro</div><p>Ocorreu um erro durante a análise. Tente novamente.</p>';
+    }
+
+    bar.classList.remove('on');
+    btn.innerHTML = '<i class="fas fa-shield-halved"></i><span>Analisar com SpecterGuard</span><i class="fas fa-arrow-right"></i>';
+    btn.disabled = false;
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+    localStorage.removeItem('sg_g');
+    localStorage.removeItem('sg_a');
+    document.getElementById('totalGolpes').textContent = '0';
+    document.getElementById('totalAnalises').textContent = '0';
+});
+
+carregarStats();
+
+// Partículas
+(function() {
+    const c = document.getElementById('particles');
+    for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const s = Math.random() * 2.5 + 1;
+        p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-delay:${Math.random()*22}s;animation-duration:${Math.random()*18+16}s;`;
+        c.appendChild(p);
+    }
+})();
+
+console.log('🛡️ SpecterGuard v6.6 — DNS + WHOIS — Rael Computadores');
+</script>
+</body>
+</html>
